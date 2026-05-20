@@ -340,7 +340,7 @@ const getVrioOfferIdByProductId = (productId) =>
 sessionStorage.setItem("integrationId", INTEGRATION_ID);
 
 const getPrices = () => {
-  return [{"name":"VIP Customer Benefits","id":26,"quantity":1,"price":24.99,"shippable":false,"fullPrice":24.99,"finalPrice":24.99,"productName":"VIP Customer Benefits","discountAmount":0,"discountPercentage":0},{"name":"1x Vital Shoulder Massager","id":1936,"quantity":1,"price":0,"shippable":false,"fullPrice":26.66,"finalPrice":26.66,"productName":"1x Vital Shoulder Massager","discountAmount":0,"discountPercentage":0},{"name":"2x Vital Shoulder Massager","id":1937,"quantity":1,"price":0,"shippable":false,"fullPrice":0,"finalPrice":0,"productName":"2x Vital Shoulder Massager","discountAmount":0,"discountPercentage":0},{"name":"3x Vital Shoulder Massager","id":1938,"quantity":1,"price":0,"shippable":false,"fullPrice":44.43,"finalPrice":44.43,"productName":"3x Vital Shoulder Massager","discountAmount":0,"discountPercentage":0},{"name":"4x Vital Shoulder Massager","id":1939,"quantity":1,"price":0,"shippable":false,"fullPrice":0,"finalPrice":0,"productName":"4x Vital Shoulder Massager","discountAmount":0,"discountPercentage":0},{"name":"Porch Pirate - Guarantee","id":2052,"quantity":1,"price":0,"shippable":false,"fullPrice":0,"finalPrice":0,"productName":"Porch Pirate - Guarantee","discountAmount":0,"discountPercentage":0},{"name":"Special 1x EXTRA Vital Shoulder Massager","id":1942,"quantity":1,"price":0,"shippable":false,"fullPrice":0,"finalPrice":0,"productName":"Special 1x EXTRA Vital Shoulder Massager","discountAmount":0,"discountPercentage":0},{"name":"Special 1x EXTRA Vital Shoulder Massager","id":1943,"quantity":1,"price":0,"shippable":false,"fullPrice":0,"finalPrice":0,"productName":"Special 1x EXTRA Vital Shoulder Massager","discountAmount":0,"discountPercentage":0},{"name":"Vital Shoulder Massager   Journey Package Protection","id":1941,"quantity":1,"price":0,"shippable":false,"fullPrice":0,"finalPrice":0,"productName":"Vital Shoulder Massager   Journey Package Protection","discountAmount":0,"discountPercentage":0},{"name":"Vital Shoulder Massager - 3 Year Warranty","id":1940,"quantity":1,"price":0,"shippable":false,"fullPrice":0,"finalPrice":0,"productName":"Vital Shoulder Massager - 3 Year Warranty","discountAmount":0,"discountPercentage":0}]
+  return [{"name":"VIP Customer Benefits","id":26,"quantity":1,"price":24.99,"shippable":false,"fullPrice":24.99,"finalPrice":24.99,"productName":"VIP Customer Benefits","discountAmount":0,"discountPercentage":0},{"name":"1x Vital Shoulder Massager","id":1936,"quantity":1,"price":0,"shippable":false,"fullPrice":89.99,"finalPrice":89.99,"productName":"1x Vital Shoulder Massager","discountAmount":0,"discountPercentage":0},{"name":"2x Vital Shoulder Massager","id":1937,"quantity":1,"price":0,"shippable":false,"fullPrice":0,"finalPrice":0,"productName":"2x Vital Shoulder Massager","discountAmount":0,"discountPercentage":0},{"name":"3x Vital Shoulder Massager","id":1938,"quantity":1,"price":0,"shippable":false,"fullPrice":65,"finalPrice":65,"productName":"3x Vital Shoulder Massager","discountAmount":0,"discountPercentage":0},{"name":"4x Vital Shoulder Massager","id":1939,"quantity":1,"price":0,"shippable":false,"fullPrice":0,"finalPrice":0,"productName":"4x Vital Shoulder Massager","discountAmount":0,"discountPercentage":0},{"name":"Porch Pirate - Guarantee","id":2052,"quantity":1,"price":0,"shippable":false,"fullPrice":0,"finalPrice":0,"productName":"Porch Pirate - Guarantee","discountAmount":0,"discountPercentage":0},{"name":"Special 1x EXTRA Vital Shoulder Massager","id":1942,"quantity":1,"price":0,"shippable":false,"fullPrice":0,"finalPrice":0,"productName":"Special 1x EXTRA Vital Shoulder Massager","discountAmount":0,"discountPercentage":0},{"name":"Special 1x EXTRA Vital Shoulder Massager","id":1943,"quantity":1,"price":0,"shippable":false,"fullPrice":0,"finalPrice":0,"productName":"Special 1x EXTRA Vital Shoulder Massager","discountAmount":0,"discountPercentage":0},{"name":"Vital Shoulder Massager   Journey Package Protection","id":1941,"quantity":1,"price":0,"shippable":false,"fullPrice":0,"finalPrice":0,"productName":"Vital Shoulder Massager   Journey Package Protection","discountAmount":0,"discountPercentage":0},{"name":"Vital Shoulder Massager - 3 Year Warranty","id":1940,"quantity":1,"price":0,"shippable":false,"fullPrice":0,"finalPrice":0,"productName":"Vital Shoulder Massager - 3 Year Warranty","discountAmount":0,"discountPercentage":0}]
 };
 
 const SUPPORTED_ADDRESS_COUNTRIES = [{"name":"United States of America","iso_2":"US"},{"name":"Canada","iso_2":"CA"},{"name":"United Kingdom","iso_2":"GB"},{"name":"Australia","iso_2":"AU"},{"name":"Germany","iso_2":"DE"},{"name":"France","iso_2":"FR"},{"name":"Spain","iso_2":"ES"},{"name":"Italy","iso_2":"IT"}];
@@ -614,7 +614,7 @@ async function createOrderViaWallet(confirmationToken, paymentMethodId) {
         ?.getAttribute("data-shipping-profile-id") || undefined;
 
   const orderData = {
-    pageId: "0sO3l7tomOsxds1c2VVjVSBoV43qz7RkxPTp0LYqWNfP9WJtdNzYyHVNFGSZTe-m",
+    pageId: "YFkMOmCE7-F0TipYpJwX10dfCc60R5Sk9KMxwA0QfTJjCbnk47c-N3AkzhM7Uym5",
     action: "process",
     campaign_id: CAMPAIGN_ID,
     connection_id: 1,
@@ -1410,7 +1410,7 @@ async function createOrderViaPaypal(isExpress = false) {
   const shippingProfileId = +document.querySelector(`[data-product-id="${selectedProduct.id}"]`)?.getAttribute('data-shipping-profile-id') || undefined;
   const sameAddress = isSameAddress();
   const orderData = {
-    pageId: "0sO3l7tomOsxds1c2VVjVSBoV43qz7RkxPTp0LYqWNfP9WJtdNzYyHVNFGSZTe-m",
+    pageId: "YFkMOmCE7-F0TipYpJwX10dfCc60R5Sk9KMxwA0QfTJjCbnk47c-N3AkzhM7Uym5",
     action: "process",
     campaign_id: CAMPAIGN_ID,
     connection_id: 1, // VRIO URL ending /connection
@@ -1710,7 +1710,7 @@ async function createOrderViaKlarna() {
   const sameAddress = isSameAddress();
 
   const orderData = {
-    pageId: "0sO3l7tomOsxds1c2VVjVSBoV43qz7RkxPTp0LYqWNfP9WJtdNzYyHVNFGSZTe-m",
+    pageId: "YFkMOmCE7-F0TipYpJwX10dfCc60R5Sk9KMxwA0QfTJjCbnk47c-N3AkzhM7Uym5",
     campaign_id: CAMPAIGN_ID,
     connection_id: 1,
     email: email,
@@ -2089,7 +2089,7 @@ async function createOrderViaCreditCard() {
   let orderTotal = Math.max(0, Number(selectedProduct.price) * selectedProduct.quantity);
 
   const orderData = {
-    pageId: "0sO3l7tomOsxds1c2VVjVSBoV43qz7RkxPTp0LYqWNfP9WJtdNzYyHVNFGSZTe-m",
+    pageId: "YFkMOmCE7-F0TipYpJwX10dfCc60R5Sk9KMxwA0QfTJjCbnk47c-N3AkzhM7Uym5",
     action: "process",
     campaign_id: CAMPAIGN_ID,
     connection_id: 1, // VRIO URL ending /connection
@@ -4349,7 +4349,7 @@ async function returnPaypal() {
 ;
 
     const body = {
-        pageId: "0sO3l7tomOsxds1c2VVjVSBoV43qz7RkxPTp0LYqWNfP9WJtdNzYyHVNFGSZTe-m",
+        pageId: "YFkMOmCE7-F0TipYpJwX10dfCc60R5Sk9KMxwA0QfTJjCbnk47c-N3AkzhM7Uym5",
         action: "process",
         campaign_id: CAMPAIGN_ID,
         connection_id: 1,
