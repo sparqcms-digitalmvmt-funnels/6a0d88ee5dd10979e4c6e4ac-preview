@@ -1,0 +1,1115 @@
+<!DOCTYPE html><html lang="en"><head><base href="/6a0d88ee5dd10979e4c6e4ac-preview/"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="description" content=""><title>presell</title><link rel="icon" href="favicon.ico" type="image/x-icon"><script>
+sessionStorage.setItem("test", false);
+
+const ALLOWED_AFFILIATE_IDS = [];
+
+let nextPageSlug = null;
+
+function handleUrlParams(params) {
+  const specialParams = ["p_dc", "p_tenbucksoff", "p_freeship", "p_freegift"];
+  const allowedDcValues = ["5", "10", "15", "20", "25"];
+  const currentAffId = params.get("affid") || sessionStorage.getItem("affid");
+  const discountsAllowed =
+    ALLOWED_AFFILIATE_IDS.length === 0 ||
+    (currentAffId !== null && ALLOWED_AFFILIATE_IDS.includes(currentAffId));
+  if (!discountsAllowed) {
+    specialParams.forEach((key) => sessionStorage.removeItem(key));
+  }
+  params.forEach((value, key) => {
+    const paramKey = `p_${key}`;
+    if (specialParams.includes(paramKey)) {
+      if (!discountsAllowed) return;
+      if (paramKey === "p_dc" && !allowedDcValues.includes(value)) return;
+      sessionStorage.setItem(paramKey, value);
+    } else {
+      sessionStorage.setItem(key, value);
+    }
+  });
+}
+
+if (localStorage.getItem('sK_r')) {
+  const cr = JSON.parse(localStorage.getItem('sK_r'));
+  const normalizePath = (rawPath) => {
+    if (!rawPath) return '';
+    try {
+      let p = String(rawPath);
+      p = p.split('?')[0].split('#')[0];
+      p = p.replace(/\/+$/, '');
+      p = p.replace(/\/index.html$/, '');
+      p = p.replace(/^\/+/, ''); p = p.replace(/^6a0d88ee5dd10979e4c6e4ac-preview\/?/, '');
+      return p;
+    } catch (e) {
+      console.error('Error normalizing path', e);
+      return '';
+    }
+  };
+  const pathname = window.location.pathname;
+  const cp = normalizePath(pathname || '/');
+  let nr = cr.find((r) => r.page === cp);
+  if (nr) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const baseNext = pathname.endsWith("/index.html") ? nr.next + "/index.html" : nr.next || '';
+    const withQuery = urlParams && urlParams.toString()
+      ? baseNext + '?' + urlParams.toString()
+      : baseNext;
+    nextPageSlug = withQuery && !withQuery.startsWith('/') ? '/6a0d88ee5dd10979e4c6e4ac-preview/' + withQuery : withQuery;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      MVMT.init('6a0d88ee5dd10979e4c6e4ac', 'Presell')
+      const ctaButtons = document.querySelectorAll("[data-cta-button]");
+      ctaButtons.forEach((button) => {
+        button.href = nextPageSlug;
+        button.addEventListener("click", (e) => {
+          e.preventDefault();
+          MVMT.track("CTA_CLICK", {
+            page: "presell",
+            page_type: "Presell",
+            page_url: window.location.href,
+          });
+          window.location.href = nextPageSlug;
+        });
+      });
+    });
+  }
+  
+}
+
+const route = async () => {
+  if (localStorage.getItem('sK_r')) return JSON.parse(localStorage.getItem('sK_r'));
+  const sessionId = MVMT.getSessionId() || localStorage.getItem("mvmt_session_id") || "";
+  const url = 'https://func-ab-test-events-prod-001.azurewebsites.net/api/checkRoute?id=6a0d88ee5dd10979e4c6e4ac&v=177927245950133&sessionId='+sessionId;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Network response was not ok');
+    const data = await response.json();
+    localStorage.setItem('sK_r', JSON.stringify(data));
+    return data;
+  } catch (error) {
+    console.error('There was a problem with the fetch operation:', error);
+    throw error;
+  }
+}
+const nextPage = async () => {
+  let cr = await route();
+  if (!cr) throw new Error('Route not found');
+  const normalizePath = (rawPath) => {
+    if (!rawPath) return '';
+    try {
+      let p = String(rawPath);
+      p = p.split('?')[0].split('#')[0];
+      p = p.replace(/\/+$/, '');
+      p = p.replace(/\/index.html$/, '');
+      p = p.replace(/^\/+/, ''); p = p.replace(/^6a0d88ee5dd10979e4c6e4ac-preview\/?/, '');
+      return p;
+    } catch (e) {
+      console.error('Error normalizing path', e);
+      return '';
+    }
+  };
+  const pathname = window.location.pathname;
+  const cp = normalizePath(pathname || '/');
+  let nr = cr.find((r) => r.page === cp);
+  if (!nr) {
+    try {
+      localStorage.removeItem('sK_r');
+    } catch (e) {
+      // ignore storage errors
+    }
+    cr = await route();
+    if (!cr) return '';
+    nr = cr.find((r) => r.page === cp);
+  }
+  const urlParams = new URLSearchParams(window.location.search);
+  if (!nr) return '';
+  const baseNext = pathname.endsWith("/index.html") ? nr.next + "/index.html" : nr.next || '';
+  const withQuery = urlParams && urlParams.toString()
+    ? baseNext + '?' + urlParams.toString()
+    : baseNext;
+  const absolute = withQuery && !withQuery.startsWith('/') ? '/6a0d88ee5dd10979e4c6e4ac-preview/' + withQuery : withQuery;
+  return absolute;
+}
+const urlParams = new URLSearchParams(window.location.search);
+handleUrlParams(urlParams);
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("click", (event) => {
+    const elementClasses = event.target.className;
+    const elementId = event.target.id;
+
+    const windowPosition = window.scrollY;
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+    const elementPosition = event.clientX;
+    const elementTop = event.clientY;
+
+    MVMT.track("PAGE_CLICK", {
+      page: "presell",
+      page_type: "Presell",
+      page_url: window.location.href,
+      element_classes: elementClasses,
+      element_id: elementId,
+      window_position: windowPosition,
+      window_width: windowWidth,
+      window_height: windowHeight,
+      element_position: elementPosition,
+      element_top: elementTop,
+    });
+  });
+
+  const params = new URLSearchParams(window.location.search);
+  const elementsToHideSelectors = Array.from(params.entries()).reduce((selectors, [key, value]) => {
+      if (value === "n" || value === "none") {
+          selectors.push(`[data-url-param-${key}]`);
+      }
+      return selectors;
+  }, []);
+  if (elementsToHideSelectors.length) {
+      document.querySelectorAll(elementsToHideSelectors.join(",")).forEach(el => el.style.display = "none");
+  }
+  const topBanner = document.querySelector("[data-url-param-colorbanner]");
+  if (topBanner && params.has("colorbanner")) topBanner.style.backgroundColor = params.get("colorbanner") || "red";
+});
+
+const getGlobals = async () => {
+  const response = await fetch("https://stdigitalmvmtprod001.blob.core.windows.net/globals/production/default");
+  const data = await response.json();
+  return data;
+};
+
+document.addEventListener("DOMContentLoaded", async() => {
+
+  if (nextPageSlug === null || nextPageSlug.length === 0) {
+    nextPageSlug = await nextPage();
+    const ctaButtons = document.querySelectorAll("[data-cta-button]");
+    ctaButtons.forEach((button) => {
+      button.href = nextPageSlug;
+      button.addEventListener("click", (e) => {
+        e.preventDefault();
+        MVMT.track("CTA_CLICK", {
+          page: "presell",
+          page_type: "Presell",
+          page_url: window.location.href,
+        });
+        window.location.href = nextPageSlug;
+      });
+    });
+  }
+    
+  const globals = await getGlobals();
+  const globalAttribute = "data-holder-global"
+  const globalElements = document.querySelectorAll(`[${globalAttribute}]`);
+  if (globalElements) {
+    globalElements.forEach((element) => {
+      const data = globals[element.getAttribute(globalAttribute)];
+      element.innerText = data.label;
+      if (data.type === "url") {
+        element.href = data.src;
+      }
+    })
+  }
+
+  // Track all elements with data-sparqcms-component-id on page view
+  const sparqcmsComponentElements = document.querySelectorAll("[data-sparqcms-component-id]");
+  const componentIds = [];
+  sparqcmsComponentElements.forEach(element => {
+    componentIds.push(element.getAttribute("data-sparqcms-component-id"));
+  });
+  
+  if (componentIds.length > 0) {
+      MVMT.track("PAGE_VIEW_COMPONENTS", {
+      page: "presell",
+      page_type: "Presell",
+      page_url: window.location.href,
+      component_ids: componentIds
+    });
+  }
+});
+  
+  </script>
+<script>
+  const offerName = 'Vital Shoulder Massager, Vital Shoulder Massager';
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({
+    'event': 'pageView', 
+    'offer': 'Vital Shoulder Massager, Vital Shoulder Massager',
+    'customer_id':sessionStorage.getItem("customerId") || undefined,
+    'page':{
+      'type':'Presell',
+      'isReload':performance.getEntriesByType("navigation")[0].type === "reload",
+      'isExclude':false
+    },
+    'experiment':{
+      'id':undefined,
+      'name':undefined,
+      'variation':undefined
+    }
+  });
+</script>
+  <link rel="stylesheet" href="styles/presell.css" /><style>@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+</style><style>@layer imported{.red {
+  color: red;
+}}</style><style>@layer imported{:root {
+  --color-text: #000000;
+  --color-background: #ffffff;
+  --color-primary: #2172ba;
+  --color-secondary: #464646;
+  --color-accent: #0c9e27;
+  --font-main: "Barlow", sans-serif;
+  --font-secondary: "Open Sans", sans-serif;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-main);
+  color: var(--color-text);
+  background-color: var(--color-background);
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.page-wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+@media (max-width: 768px) {
+  .page-wrapper {
+    padding: 0;
+  }
+}
+
+.main-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 40px;
+  align-items: start;
+}
+
+main {
+  min-width: 0;
+}
+
+aside {
+  position: sticky;
+  top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-main);
+  font-weight: 700;
+  margin: 0;
+}
+
+h1 {
+  font-size: 55px;
+  line-height: 1.15;
+}
+
+h2 {
+  font-size: 40px;
+  line-height: 1.15;
+  margin-bottom: 20px;
+}
+
+p {
+  margin: 0 0 24px 0;
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+.text-green {
+  color: #0d9e27;
+  font-weight: 700;
+}
+
+@media (max-width: 992px) {
+  .main-layout {
+    grid-template-columns: 1fr;
+  }
+
+  aside {
+    position: static;
+  }
+
+  h1 {
+    font-size: 40px;
+  }
+
+  h2 {
+    font-size: 32px;
+  }
+}
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 32px;
+    padding: 0 17px;
+  }
+
+  h2 {
+    font-size: 28px;
+    padding: 0 17px;
+  }
+  .text {
+    padding: 0 17px;
+  }
+  ul {
+    padding: 0 17px !important;
+  }
+}
+
+/* CSS for section section:header */
+.advertorial-bar {
+  background-color: #646464;
+  color: #ffffff;
+  text-align: center;
+  padding: 2px 0;
+  font-family: var(--font-secondary);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.advertorial-bar .text {
+  margin: 0;
+}
+
+.site-header {
+  background-color: var(--color-primary);
+  padding: 10px 20px;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.header-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo-image-wrapper {
+  position: relative;
+  width: 187px;
+  height: 51px;
+}
+
+.warning-message {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #ffffff;
+  font-family: var(--font-main);
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.warning-icon {
+  width: 28px;
+  height: 28px;
+}
+
+@media (max-width: 768px) {
+  .header-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .warning-message {
+    font-size: 12px;
+    text-align: center;
+    gap: 3px;
+    align-items: flex-start;
+  }
+
+  .warning-icon {
+    width: 17px;
+    height: 14px;
+    margin-top: 3px;
+  }
+}
+
+/* CSS for section section:main-content */
+.main-title {
+  margin-top: 28px;
+  margin-bottom: 28px;
+}
+
+.article-meta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 60px;
+  font-size: 14px;
+  padding: 0 17px;
+}
+
+@media (max-width: 768px) {
+  .article-meta {
+    gap: 0;
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    margin-bottom: 15px;
+  }
+
+  .main-title {
+    font-size: 28px;
+  }
+}
+
+.divider.mobile {
+  margin: 15px 0 10px 0;
+  width: 100%;
+}
+
+.author-info {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.author-avatar {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.update-info {
+  background-color: #464646;
+  color: #ffffff;
+  padding: 6px 15px;
+  border-radius: 21px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.divider {
+  border: none;
+  border-top: 0.5px solid #c9c9c9;
+  margin: 28px 0;
+}
+
+.hero-image-container {
+  position: relative;
+  margin-bottom: 28px;
+}
+
+.hero-image-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.image-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 80.11%);
+  color: #ffffff;
+  text-align: center;
+  padding: 40px 20px 20px;
+}
+
+.image-caption .text {
+  margin: 0;
+  font-weight: 700;
+  font-size: 18px;
+  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+main section {
+  margin-bottom: 60px;
+}
+
+.content-image {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 24px 0;
+}
+
+.feature-list li {
+  margin-bottom: 16px;
+}
+
+.sidebar-widget {
+  border: 0.5px solid #004346;
+  border-radius: 20px;
+  background-color: #fbfbfb;
+  padding: 20px;
+  text-align: center;
+}
+
+.ad-widget .ad-logo {
+  width: 181px;
+  margin: 0 auto 65px;
+}
+
+.ad-widget .ad-product-image {
+  width: 100%;
+  margin-bottom: 45px;
+}
+
+.shop-now-button {
+  display: block;
+  background: linear-gradient(180deg, #ffd24e 0%, #ffa300 100%);
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s;
+}
+
+.shop-now-button:hover {
+  transform: translateY(-2px);
+}
+
+.author-widget h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.author-divider {
+  border: none;
+  border-top: 0.5px solid #003459;
+  margin: 10px 0 10px;
+}
+
+.author-photo-wrapper {
+  position: relative;
+  width: 100%;
+  border-radius: 15px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.author-widget .text {
+  font-size: 18px;
+  text-align: left;
+  margin: 0;
+}
+
+/* CSS for section section:testimonials */
+#testimonials {
+  margin-bottom: 60px;
+}
+
+.testimonial-header-image-wrapper {
+  position: relative;
+  width: 100%;
+  margin-bottom: 45px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.testimonial-header-image-wrapper img {
+  border-radius: 8px;
+}
+
+.testimonials-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.testimonial-card {
+  display: flex;
+  background-color: #f8f8f8;
+  border-radius: 0 8px 8px 0;
+  overflow: hidden;
+}
+
+.testimonial-image {
+  flex-shrink: 0;
+  width: 223px;
+  border-left: 8px solid #f8b304;
+}
+
+.testimonial-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.testimonial-content {
+  position: relative;
+  padding: 20px 30px;
+  background-color: #f8f8f8;
+  flex-grow: 1;
+  padding-top: 8px;
+}
+
+.testimonial-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 5%;
+  height: 50px;
+  background-color: #2172ba;
+  border-radius: 0 0 100px 0;
+}
+
+.testimonial-content h3 {
+  position: relative;
+  z-index: 1;
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+
+.testimonial-content .text {
+  font-size: 18px;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0 30px;
+}
+
+.quote-start {
+  position: absolute;
+  top: 65px;
+  left: 20px;
+  width: 30px;
+}
+
+.quote-end {
+  position: absolute;
+  bottom: 100px;
+  right: 20px;
+  width: 30px;
+}
+
+.testimonial-footer {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0 30px;
+  margin-top: 20px;
+  gap: 46px;
+}
+
+.author-name {
+  font-weight: 700;
+  color: #454545;
+  font-size: 18px;
+  white-space: nowrap;
+}
+
+.rating-stars {
+  height: 15px;
+}
+
+@media (max-width: 768px) {
+  .testimonial-content h3 {
+        font-size: 15px;
+        white-space: nowrap;
+        padding-top: 5px;
+}
+
+  .testimonial-card {
+    flex-direction: column;
+    border-radius: 0 0 35px 35px;
+        overflow: hidden;
+  }
+
+  .testimonial-image {
+    width: 100%;
+  }
+.image-caption {
+      padding-left: 10px;
+    padding-right: 10px;
+}
+  .image-caption .text {
+    font-size: 12px;
+    padding: 0;
+  }
+  .sidebar-widget {
+    margin: 0 17px 40px 17px;
+  }
+  .testimonial-header-image-wrapper img.hide-after-mobile {
+            width: 95%;
+        margin: auto;
+  }
+  .testimonial-content::before {
+    right: 6%;
+  }
+  .quote-end {
+    bottom: 60px;
+  }
+}
+
+.sidebar-widget.hide-after-mobile {
+  display: flex;
+  gap: 26px;
+  align-items: center;
+  padding-bottom: 50px;
+}
+.sidebar-widget.hide-after-mobile.ad-widget {
+  border: none;
+  }
+.sidebar-widget.hide-after-mobile.author-widget{
+  flex-direction: column;
+}
+
+.sidebar-widget.hide-after-mobile .ad-product-image {
+  height: 60px;
+  width: auto;
+  margin: 0;
+}
+
+.sidebar-widget.hide-after-mobile.ad-widget .ad-logo {
+  margin: 0;
+  height: 37px;
+  width: auto;
+}
+
+.sidebar-widget.hide-after-mobile.ad-widget .shop-now-button {
+  font-size: 14px;
+  width: 100%;
+  padding: 10px 0;
+}
+
+.sidebar-widget.hide-after-mobile.ad-widget .shop-now-wrapper {
+  flex: 1;
+}
+
+.shop-now-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 21px;
+  flex-direction: column;
+}
+
+/* CSS for section section:cta-and-conclusion */
+#cta-and-conclusion section {
+  margin-bottom: 0;
+  margin-top: 50px;
+}
+
+#conclusion {
+  margin-bottom: 60px !important;
+}
+
+.cta-section {
+  border: 1px dashed #000000;
+  border-radius: 8px 8px 0 0;
+  overflow: hidden;
+  text-align: center;
+  position: relative;
+}
+
+.cta-background-image {
+  position: relative;
+}
+
+.cta-logo-wrapper {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  width: 187px;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.cta-content {
+  background-color: #444444;
+  color: #ffffff;
+  padding: 20px;
+}
+
+.cta-offer {
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.cta-headline {
+  font-size: 50px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 20px;
+}
+
+.cta-button {
+  display: inline-block;
+  background-color: #ffffff;
+  color: #000000;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 10px 80px;
+  border-radius: 150px;
+  text-decoration: none;
+  margin-bottom: 20px;
+  transition: background-color 0.3s;
+}
+
+.cta-button:hover {
+  background-color: #f0f0f0;
+}
+
+.payment-icons {
+  width: 100%;
+  padding: 15px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px dashed #000;
+  margin-bottom: 60px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .cta-headline {
+    font-size: 36px;
+  }
+  #cta-and-conclusion section {
+    margin-top: 0;
+  }
+  #conclusion {
+  margin-bottom: 45px !important;
+}
+}
+
+/* CSS for section section:footer */
+.site-footer {
+  background-color: #fafafa;
+  padding: 40px 20px;
+  font-family: var(--font-secondary);
+  color: #4a4a4a;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.footer-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.disclaimer {
+  margin-bottom: 40px;
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  font-size: 16px;
+}
+
+.footer-nav a {
+  color: #4a4a4a;
+  text-decoration: none;
+  margin: 0 5px;
+}
+
+.footer-nav a:hover {
+  text-decoration: underline;
+}
+
+.copyright {
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .footer-bottom {
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
+@media (min-width: 768px) {
+  .hide-after-mobile {
+    display: none !important;
+  }
+}
+
+.hide-mobile {
+  display: none;
+}
+
+@media (min-width: 769px) {
+  .hide-mobile {
+    display: flex;
+  }
+}
+
+.hide-after-tablet {
+  display: none !important;
+}
+
+@media (max-width: 1200px) {
+  .hide-tablet {
+    display: none !important;
+  }
+
+  .hide-after-tablet {
+    display: flex !important;
+  }
+}
+
+@media (min-width: 992px) {
+  .hide-after-md {
+    display: none;
+  }
+}
+
+@media (max-width: 992px) {
+  .hide-md {
+    display: none !important;
+  }
+
+  .hide-after-md {
+    display: flex;
+  }
+}
+
+@media (min-width: 1200px) {
+  .hide-desktop {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .wrap-mobile {
+    padding: 0 17px;
+  }
+}
+
+.c5g4gle { z-index: 999999 }
+
+@media (max-width: 992px) {
+  .c5g4gle { 
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    z-index: 9999;
+    }
+}}</style></head><body><div><div><div class="c-lc9846 c-o6hhdg c-rri4mx cxpk1f6 c-5pdfmv c-a4oera c-i86k2d cfxwihl cnby850 ciwhsh3 cr8hj7x corctar c-mb61ox c-v76y7t c-n92bdn c-ic30jh c-lbx363 c5g4gle" data-cookie-banner=""><span class="cybjsex c-b1u9qq cq10fwz c-i9vfpo c-mb8mk">We value your privacy</span><span class="c-mtr8v"><div>By clicking “Accept,” you agree to our Terms of Use and our Privacy Policy. Clicking “Accept” means you consent to the use of cookies and similar tracking technologies to, among other things, serve you relevant ads ourselves or through our third-party ad partners with whom data from cookies is shared</div></span><div class="c-lc9846 c-oaxxat c-rri4mx cevei02 c-a4oera cruvoz0 c-b1u9qq c-crbsvi c-aop3ja c-ch8uwh c-i9vfpo c-evftdq" data-cookie-btns=""><button class="c-lc9846 c-oaxxat cxpk1f6 c-rri4mx c-3n4ynq c-jaytv5 c-sc1q4l c-z1rj74 ccdkvsh c-2hf5cf cu8uuf8 cz02kxo c-63hydz c-mb4rpv c-tij0or c-evftdq"><span class="">Customize</span></button><button class="c-lc9846 c-oaxxat cxpk1f6 c-rri4mx c-3n4ynq c-jaytv5 c-sc1q4l c-z1rj74 ccdkvsh c-2hf5cf cu8uuf8 cz02kxo c-63hydz c-tij0or c-mb4rpv c-evftdq"><span class="">Accept All</span></button><button class="c-lc9846 c-oaxxat cxpk1f6 c-rri4mx c1mdae7 c-jaytv5 c-sc1q4l ccdkvsh c-2hf5cf cu8uuf8 cey0ojg c-63hydz c-z1rj74 c-evftdq"><span class="">Reject All</span></button></div></div></div><div id="itH-GPhUMJ1Czt9JznIYw" class="template-content"><section id="section-main-content" class="page-wrapper ck0fzrl c-crbsvi ctduf03 c-xempt3 c2u2kz6 c-lyy4od"><div class="c-lc9846 c-oaxxat c-rri4mx cxpk1f6 c-5pdfmv c-a4oera c-crbsvi ctduf03 cckgi1k cnwgn1p c2yn23a"><img src="assets/adt-presell-hero-image1.png" class="c-hi7sxz cjmgjye ch6rbyu" loading="lazy"/><div id="nVPUmY30Ts-GVX9rwDHFg" class="ccjwpg7 cnvg8sm ctujf64"><span id="5Pt8ZUynCIoGrAZAeA64w" class="c-b1tmr7 c-tvn8fg c-l53hq cybkfeg cdtu4gl c-kixfe9 c-jo2zd4 c-nwgv4b cblmt4n cjt0hrq ctujf64"><div><div>Why Thousands Are Turning to This Unusual Tea for Weight Loss, Gut Health, and Better Energy&nbsp;</div><div></div></div></span></div><img src="assets/adt-presell-hero-divider.png" class="c-hi7sxz cjmgjye c-d33meo cckgi1k cnvwugc c2yn23a ctujf64" loading="lazy"/><span id="tcm67Z3mI90lVzLSRIzzF" class="c-mcilm cybjsex c69iwd8 c-jp40lq cblk96j">Designed to support stubborn fat loss where traditional diets fall short&nbsp;</span></div><div id="62XMfCWRa27vf7kYselHR" class="author-info cnvwugc c7l9c6s c-orcywl"><img src="assets/adt-presell-author-image2.png" class="c-hi7sxz cjmgjye c-d6b717 cxtohsy" loading="lazy"/><span id="tcm67Z3mI90lVzLSRIzzF" class="c-mcilm cybiifv c69iwd8 c-jp40lq">By Dr Olivia Smith, Health Correspondent&nbsp;</span></div><div id="m8MCL53qfxXEliQMtzKSs" class="article-meta c-lkhn28 c-crbsvi ctduf03"><div id="QI6rOazndj8-56S9zyKSq" class="divider mobile hide-after-mobile"></div></div><div id="7fEIUM9Xy_z1ytfVLcFuo" class="cq10fwz"><main id="tG5kZ5DcuzYERAujCUpW6" class=""><article id="Rt2j2OzPP4U6Zqk9HkyAn" class=""><div id="pIKymN_8J5uNQHHYY1dRL" class="hero-image-container c-b1tmr7 cxo9jnp"><video src="assets/adt-presell-hero-video1.mp4" alt="Woman with glasses" class="ck0fzrl cmpbgw3 c-4kn2ue c7e7cj7 cd88b8k" id="4mK109NPjdJY1U3Jzc6aA" loading="lazy" autoplay="true" muted="" loop=""></video></div><section id="intro" class="c-ljyhge"><div id="8-6qifx31fOJgq1mIVz-d" class="wrap-mobile c-ll22n4 cevgj0h cnwgn1p ccl0amx cuo0vhx c-cgrdu4 c-oaxxat cxpk1f6 c-evftdq c-tvn8fg c-6dxbsu cmpbgw3 c2u2kz6 c-lyy4od"><span id="bhSxtT9nLcFP9ee51YlSi" class="c-n92bdn"><span id="dj9TSC9p5f1arl9T9XoXb" class="c-cvr7xx c-mdsko c-jp40lq">A new approach to natural weight management has been gaining attention across the UK. A fast-growing wellness company has developed a 100% herbal blend designed to support the body’s natural detox processes, supports metabolism and may help accelerate weight loss with just one cup a day.</span></span></div><div id="8-6qifx31fOJgq1mIVz-d" class="c3afcc4 cnvd1uz"><span id="18mqwFxvcrl-NOCtqbtrl" class=""><span id="19WCW9V4wwCxk3VphR2qM" class="c-cvr7xx"><span id="G5ewnRvAbZHZJzD0IQay1" class="c-cvr7xx"><span id="BxKJkf4j9c54Fuvmgzb6R" class="c-cvr7xx"><span id="jt03Mud86KcUHxKAc5Btm" class="c-cvr7xx c69iwd8">This blend, known as </span><span id="Dy10aBhf6sIQg5OjCjE4W" class="c-cvr7xx c69iwd8 cybkfeg">Akemi Detox Tea</span><span id="KM5ZBa9Z3ftEuA9wnELH0" class="c-cvr7xx c69iwd8">, is helping thousands of people lose up to 10 lbs (around 4.5 kg) in 30 days while supporting digestion and overall wellbeing. <br><br>
+
+And it’s quickly gaining attention.</span></span></span></span></span></div></section><section id="features" class="c-lkia1r"><div id="nVPUmY30Ts-GVX9rwDHFg" class="ccjwpg7"><span id="5Pt8ZUynCIoGrAZAeA64w" class="c-b1tmr7 c-tvn8fg c-lpj2m cybkfeg cdtxbe8 c-kixfe9 c-jom4yy c-nwgv4b cblmt4n"><div><div>The Discovery Presented at a Leading Nutrition Conference</div><div></div></div></span></div><div id="nVPUmY30Ts-GVX9rwDHFg" class=""><span id="rchMi1yzCR9bW0Cnirnnw" class=""><span id="VR_SIc8uJKTRpiERHG1LH" class="c-cvr7xx"><span id="DxyNoQUsGN_TWGttY8gt3" class="c-cvr7xx c69iwd8">During a lecture at a major nutrition conference in early 2025, founders Amy Miller and Hillary Jones presented their research into natural weight management and digestive health.<br><br>
+
+“We tried countless diets, but nothing delivered lasting results,” Amy explained.<br><br>
+
+“So we focused on creating something more sustainable — a gentle, natural approach designed to support long-term results.”<br><br>
+
+Nutrition experts noted the formulation’s combination of traditional herbal ingredients with a focus on metabolism and digestive support.</span></span></span></div></section></article><section id="features" class="c-lkia1r"><div id="nVPUmY30Ts-GVX9rwDHFg" class="ccjwpg7"><span id="5Pt8ZUynCIoGrAZAeA64w" class="c-b1tmr7 c-tvn8fg c-lq625 cybkfeg c-kixfe9 c-jom4yy c-nwgv4b cblmt4n"><div><div>Interview With the Founders of Akemi Detox Tea</div><div></div><div></div></div></span></div><img src="assets/adt-presell-section2-image.png" alt="Eye chart seen through glasses" class="content-image cmpbgw3 cd88b8k" id="74x3ZH8vs4bk8iBFpYUeJ" loading="lazy"/><div id="nVPUmY30Ts-GVX9rwDHFg" class="ccjwpg7 c-oaxxat cxpk1f6"><span id="OSIVrfd27a36Eyo1WvTwe" class="c-b1tmr7"><span id="fdfAqKb4HUlZ8GCFYTFlh" class="c-cvr7xx"><span id="xBAtsnai56yuNMU0IP9pb" class="c-cvr7xx c69iwd8 cybkfeg"><span><span>Independent Health Journalist: What led you to develop a natural weight management solution?<br></span></span><br>Amy:<span></span><br><span></span></span><span id="rjztblkUo6wNYtGWIlwXd" class="c-cvr7xx"><span id="_3tGe_XyvUrzfT3b2wglT" class="c-cvr7xx c69iwd8 cybiifv">“For centuries, traditional Asian cultures have used specific herbs to support digestion, metabolism, and overall wellbeing. These practices have long focused on balance and natural approaches to maintaining a healthy weight.<br><br>
+
+Building on that knowledge, we spent months researching and testing plant-based ingredients. After a full year of development, we created a carefully balanced blend designed to support digestion, metabolism, and overall wellbeing — which is what makes </span><span id="7FJbh1n3rvGWxK586Wiby" class="c-cvr7xx c69iwd8 cybkfeg">Akemi Detox Tea</span><span id="-sgCvzCEt087r46DHqfTu" class="c-cvr7xx c69iwd8 cybiifv"> unique.”
+</span></span></span></span></div></section><section id="features" class="c-lkia1r"><div id="nVPUmY30Ts-GVX9rwDHFg" class="ccjwpg7"><span id="5Pt8ZUynCIoGrAZAeA64w" class="c-b1tmr7 c-tvn8fg c-lq625 cybkfeg c-kixfe9 c-jom4yy c-nwgv4b cblmt4n"><div><div>What Sets Akemi Detox Tea Apart</div><div></div></div></span></div><div id="nVPUmY30Ts-GVX9rwDHFg" class="ccjwpg7"><span id="6YqOOeAj9poS-7iBr4FB1" class="c-b1tmr7"><span id="GKX1o-kz0-Wnmas0wBLGx" class="c-cvr7xx c69iwd8 cybkfeg">Independent Health Journalist: How does Akemi Detox Tea differ from other weight management products on the market?</span><span id="QSUrcA5pzfS6Z_dRuAmqA" class="c-cvr7xx"><span id="Y2XMYiqOCxD7uWIE_G3wN" class="c-cvr7xx c69iwd8 cybkfeg"><span><span><br><br></span><span>Hillary:</span><br><span></span></span></span><span id="1fFzqFrlWBMMyq-v_DGVG" class="c-cvr7xx c69iwd8 cybiifv">“Many products rely on harsh ingredients, restrictive approaches, or short-term fixes. Akemi Detox Tea takes a more balanced, plant-based approach, using a blend of herbal ingredients traditionally used to support digestion and metabolism.”<br><br>
+
+“The ingredients are designed to work together to support your body’s natural processes, including digestion, energy levels, and metabolic function. Over time, this may help contribute to:</span></span></span></div><div class="c-lc9846 c-oaxxat c-rri4mx cxpk1f6 c-5pdfmv c-a4oera c-crbsvi ctduf03 cb2yb9t c69iwd8"><div class="c-lc9846 c-oaxxat c-rri4mx cevei02 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 c-orcywl c-jfif3f c5ebccj"><img src="assets/adt-presell-section4-icon1.png" class="c-hi7sxz cjmgjye c-d6uzmk cxt4p7l" loading="lazy"/><div class="c-lc9846 c-oaxxat c-rri4mx cxpk1f6 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 cg20131 c-h2riph"><span class="c-n92bdn c8cprm">Improved energy levels</span></div></div><div class="c-lc9846 c-oaxxat c-rri4mx cevei02 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 c-orcywl c-jfif3f c5ebccj"><img src="assets/adt-presell-section4-icon1.png" class="c-hi7sxz cjmgjye c-d6uzmk cxt4p7l" loading="lazy"/><div class="c-lc9846 c-oaxxat c-rri4mx cxpk1f6 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 cg20131 c-h2riph"><span class="c-n92bdn c8cprm">Reduced bloating</span></div></div><div class="c-lc9846 c-oaxxat c-rri4mx cevei02 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 c-orcywl c-jfif3f c5ebccj"><img src="assets/adt-presell-section4-icon1.png" class="c-hi7sxz cjmgjye c-d6uzmk cxt4p7l" loading="lazy"/><div class="c-lc9846 c-oaxxat c-rri4mx cxpk1f6 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 cg20131 c-h2riph"><span class="c-n92bdn c8cprm">Sustainable weight management without extreme dieting</span></div></div></div></section><section id="features" class="c-lkia1r"><div id="nVPUmY30Ts-GVX9rwDHFg" class="ccjwpg7"><span id="5Pt8ZUynCIoGrAZAeA64w" class="c-b1tmr7 c-tvn8fg c-lq625 cybkfeg c-kixfe9 c-jom4yy c-nwgv4b cblmt4n"><div><div>Why Traditional Diets Don’t Always Work and a Different Approach</div><div></div></div></span></div><div id="nVPUmY30Ts-GVX9rwDHFg" class="ccjwpg7"><span id="ydZJX_QgoDIUJT1kLgHgZ" class="c-b1tmr7"><span id="0q995QIO-9CIo36yGRWVG" class="c-cvr7xx c69iwd8 cybkfeg"><span>Independent Health Journalist: Why do you think traditional diets don’t work for so many people?<br><br></span><span>Amy:</span><br></span><span id="D44g7-rxDJY2CEd12Gwpr" class="c-cvr7xx"><span id="qmi0HVP7u_Ehj5AvoCJ1i" class="c-cvr7xx"><span id="54or3xNn477WtKUKESE_v" class="c-cvr7xx c69iwd8">“Many diets focus on short-term restriction rather than long-term balance. People often see initial results, but find it difficult to maintain them once normal eating habits return.”<br><br>
+
+“In many cases, factors like metabolism, digestion, and overall lifestyle play a much bigger role than simply reducing calories. If those aren’t supported, it can make sustainable progress more challenging.”<br><br>
+
+“</span><span id="xdFpUk1vpCD_49QJeKmTg" class="c-cvr7xx c69iwd8 cybkfeg">Akemi Detox Tea</span><span id="P8kGg5tam5oSZKY5yodpQ" class="c-cvr7xx c69iwd8"> was developed as a more supportive approach. It is designed to work alongside your body by helping to support digestion, metabolism, and daily energy levels. The goal is not a quick fix, but something people can realistically maintain over time.”<br><br>
+</span></span><span id="EiZqGR_1XG6PsH7dRmvYM" class="c-cvr7xx"><span id="nps7VO8DZhfVWtqWg0cKB" class="c-cvr7xx c69iwd8 cybkfeg"><div>Independent Health Journalist: What kind of feedback have you received from customers?<br><br></div><span>Hillary:</span><br></span><span id="pTCzOCoE-3kiZSZLXF1_K" class="c-cvr7xx"><span id="-pxTPNGqC8U32bHLAynE2" class="c-cvr7xx c69iwd8">“We regularly hear from customers who felt they had tried everything without long-term success. Many tell us they have noticed improvements in how they feel day to day, from better energy levels to reduced bloating, which helps them stay more consistent with their overall routine.”</span></span></span></span></span></div><video src="assets/adt-presell-section2-video1.mp4" alt="Woman with glasses" class="ck0fzrl cmpbgw3 c-4kn2ue c7e7cj7 cd88b8k" id="4mK109NPjdJY1U3Jzc6aA" loading="lazy" autoplay="true" muted="" loop=""></video></section><section id="features" class="c-lkia1r"><div id="nVPUmY30Ts-GVX9rwDHFg" class="ccjwpg7"><span id="5Pt8ZUynCIoGrAZAeA64w" class="c-b1tmr7 c-tvn8fg c-lq625 cybkfeg c-kixfe9 c-jom4yy c-nwgv4b cblmt4n"><div><div>What’s Inside Akemi Detox Tea And Why It Works</div><div></div><div></div></div></span></div><span id="rsZKype2bg7MJWB91xgmd" class="c-n92bdn ccjwpg7"><span id="oKC-IDfNeM2qXwitei4R0" class="c-cvr7xx c69iwd8">A sluggish metabolism, toxin buildup, and slow digestion BLOCK fat burning.<br></span><span id="dT2veBIqfkV4o2wnVOMEx" class="c-cvr7xx c69iwd8 cybkfeg">Akemi Detox Tea</span><span id="SeUTlFg1yVuomC37oCAlS" class="c-cvr7xx c69iwd8"> attacks all three at once.<br></span></span><img src="assets/akemidetoxtea-presell-section7-image-1.webp" alt="Eye chart seen through glasses" class="content-image c-aop3ja cv4ctcs cmpbgw3 c-6dxbsu" id="74x3ZH8vs4bk8iBFpYUeJ" loading="lazy"/><div class="c-lc9846 c-oaxxat c-rri4mx cxpk1f6 c-5pdfmv c-a4oera c-crbsvi ctduf03 cb2yb9t c69iwd8"><div class="c-lc9846 c-oaxxat c-rri4mx cevei02 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 c-orcywl c-jfif3f c5ebccj"><img src="assets/adt-presell-section5-icon1.png" class="c-hi7sxz cjmgjye c-d6uzmk cxt4p7l" loading="lazy"/><div class="c-lc9846 c-oaxxat c-rri4mx cxpk1f6 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 cg20131 c-h2riph"><span class="cmyac1f cybkfeg">Oolong Tea</span><span class="c-n92bdn c8cprm">Flushes waste, improves digestion, and tackles water retention for a visibly flatter belly.</span></div></div><div class="c-lc9846 c-oaxxat c-rri4mx cevei02 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 c-orcywl"><img src="assets/adt-presell-section5-icon1.png" class="c-hi7sxz cjmgjye c-d6uzmk cxt4p7l" loading="lazy"/><div class="c-lc9846 c-oaxxat c-rri4mx cxpk1f6 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 cg20131 c-h2riph"><span class="cmyac1f cybkfeg">Milk Thistle</span><span class="c-n92bdn c8cprm">Cleanses and supports the liver which is the body’s main fat-processing organ.</span></div></div><div class="c-lc9846 c-oaxxat c-rri4mx cevei02 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 c-orcywl"><img src="assets/adt-presell-section5-icon1.png" class="c-hi7sxz cjmgjye c-d6uzmk cxt4p7l" loading="lazy"/><div class="c-lc9846 c-oaxxat c-rri4mx cxpk1f6 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 cg20131 c-h2riph c8cprm"><span class="cmyac1f cybkfeg">Matcha Green Tea</span><span class="c-n92bdn c8cprm">A metabolic powerhouse that ramps up thermogenesis, helping your body burn calories.</span></div></div><div class="c-lc9846 c-oaxxat c-rri4mx cevei02 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 c-orcywl"><img src="assets/adt-presell-section5-icon1.png" class="c-hi7sxz cjmgjye c-d6uzmk cxt4p7l" loading="lazy"/><div class="c-lc9846 c-oaxxat c-rri4mx cxpk1f6 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 cg20131 c-h2riph"><span class="cmyac1f cybkfeg">Nettle Leaves</span><span class="c-n92bdn c8cprm">Eliminates toxins, removes excess water, and naturally reduces weight.</span></div></div><div class="c-lc9846 c-oaxxat c-rri4mx cevei02 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 c-orcywl"><img src="assets/adt-presell-section5-icon1.png" class="c-hi7sxz cjmgjye c-d6uzmk cxt4p7l" loading="lazy"/><div class="c-lc9846 c-oaxxat c-rri4mx cxpk1f6 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 cg20131 c-h2riph"><span class="cmyac1f cybkfeg">Guarana</span><span class="c-n92bdn c8cprm">Provides smooth, long-lasting energy and keeps fat-burning elevated for hours.</span></div></div><div class="c-lc9846 c-oaxxat c-rri4mx cevei02 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 c-orcywl"><img src="assets/adt-presell-section5-icon1.png" class="c-hi7sxz cjmgjye c-d6uzmk cxt4p7l" loading="lazy"/><div class="c-lc9846 c-oaxxat c-rri4mx cxpk1f6 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 cg20131 c-h2riph"><span class="cmyac1f cybkfeg">Goji Berries</span><span class="c-n92bdn c8cprm">Stops cravings and enhances fat metabolism with nutrient-dense antioxidants.</span></div></div><div class="c-lc9846 c-oaxxat c-rri4mx cevei02 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 c-orcywl"><img src="assets/adt-presell-section5-icon1.png" class="c-hi7sxz cjmgjye c-d6uzmk cxt4p7l" loading="lazy"/><div class="c-lc9846 c-oaxxat c-rri4mx cxpk1f6 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 cg20131 c-h2riph c8cprm"><span class="cmyac1f cybkfeg">Lemongrass</span><span class="c-n92bdn c8cprm">Calms the stomach, improves digestion, and minimizes bloating.</span></div></div><div class="c-lc9846 c-oaxxat c-rri4mx cevei02 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 c-orcywl"><img src="assets/adt-presell-section5-icon1.png" class="c-hi7sxz cjmgjye c-d6uzmk cxt4p7l" loading="lazy"/><div class="c-lc9846 c-oaxxat c-rri4mx cxpk1f6 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 cg20131 c-h2riph c8cprm"><span class="cmyac1f cybkfeg">Dandelion Leaf</span><span class="c-n92bdn c8cprm">Accelerates fat digestion and stabilizes blood sugar to stop sudden hunger spikes.</span></div></div><div class="c-lc9846 c-oaxxat c-rri4mx cevei02 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 c-orcywl"><img src="assets/adt-presell-section5-icon1.png" class="c-hi7sxz cjmgjye c-d6uzmk cxt4p7l" loading="lazy"/><div class="c-lc9846 c-oaxxat c-rri4mx cxpk1f6 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 cg20131 c-h2riph"><span class="cmyac1f cybkfeg">Yerba Mate</span><span class="c-n92bdn c8cprm">Enhances calorie burn, reduces appetite, and boosts natural energy.</span></div></div><div class="c-lc9846 c-oaxxat c-rri4mx cevei02 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 c-orcywl"><img src="assets/adt-presell-section5-icon1.png" class="c-hi7sxz cjmgjye c-d6uzmk cxt4p7l" loading="lazy"/><div class="c-lc9846 c-oaxxat c-rri4mx cxpk1f6 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 cg20131 c-h2riph"><span class="cmyac1f cybkfeg">Sencha Green Tea</span><span class="c-n92bdn c8cprm">Neutralizes damaging free radicals and reduces inflammation that slows fat loss.</span></div></div><div class="c-lc9846 c-oaxxat c-rri4mx cevei02 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 c-orcywl"><img src="assets/adt-presell-section5-icon1.png" class="c-hi7sxz cjmgjye c-d6uzmk cxt4p7l" loading="lazy"/><div class="c-lc9846 c-oaxxat c-rri4mx cxpk1f6 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 cg20131 c-h2riph"><span class="cmyac1f cybkfeg">Stevia Leaf Extract</span><span class="c-n92bdn c8cprm">Adds natural sweetness without calories or sugar.</span></div></div><div class="c-lc9846 c-oaxxat c-rri4mx cevei02 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 c-orcywl"><img src="assets/adt-presell-section5-icon1.png" class="c-hi7sxz cjmgjye c-d6uzmk cxt4p7l" loading="lazy"/><div class="c-lc9846 c-oaxxat czb3o6e cxpk1f6 c-5pdfmv c-a4oera c-aop3ja c-crbsvi c-b1u9qq ctduf03 cg20131 cxy43fq c-h2riph"><span class="cmyac1f cybkfeg">Ginseng</span><span class="cmyac1f">This ancient stress-killer is known to lower your blood pressure and protect your body from disease.</span></div></div><span id="ifS9gRSgFSnkHGEsVNcra" class="cmyac1f c-b1u9qq cnvd1uz c8cprm"><span id="wv0Q3tWwrilQ0x3hgf6Hj" class="c-cvr7xx"><span>This isn’t hype.<br>This is</span></span><span id="eCz3Y1IGMF_Yh16qZZ5mL" class="c-cvr7xx cybkfeg"><span> real, natural fat-loss science</span></span><span id="_OqWJOXhZIWeM8nDnKpje" class="c-cvr7xx"><span id="2g2deNZ7CqpsEACDU-HG_" class="c-cvr7xx"><span> backed by generations of herbal knowledge.</span><span><br></span><br><span>People who want results choose </span></span><span id="hcaYC6cEErl-4VtNjzMJ_" class="c-cvr7xx cybkfeg"><span>Akemi Detox Tea</span></span><span id="9S9nky4i76QIirET9luUc" class="c-cvr7xx"><span>. <br>Everyone else stays stuck hoping for magic.</span></span></span></span></div></section><section id="features" class="c-lkia1r"><div id="nVPUmY30Ts-GVX9rwDHFg" class="ccjwpg7"><span id="5Pt8ZUynCIoGrAZAeA64w" class="c-b1tmr7 c-tvn8fg c-lq625 cybkfeg c-kixfe9 c-jom4yy c-nwgv4b cblmt4n"><div><div>How to Use Akemi Detox Tea</div><div></div></div></span></div><div id="nVPUmY30Ts-GVX9rwDHFg" class="ccjwpg7"><span id="5Pt8ZUynCIoGrAZAeA64w" class="c-b1tmr7 c69iwd8"><div><div>It couldn’t be simpler:<br><br></div><div></div><div><div>1. Add one sachet to around 200 ml of hot water</div><div>2. Leave to steep for 5 to 7 minutes</div><div>3. Drink hot or allow it to cool for a refreshing iced tea</div><div>4. Enjoy once a day as part of your routine<br></div></div></div></span></div><img src="assets/adt-presell-section6-image1.png" alt="Eye chart seen through glasses" class="content-image cmpbgw3 cd88b8k" id="74x3ZH8vs4bk8iBFpYUeJ" loading="lazy"/></section><section id="features" class="c-lkia1r"><div id="nVPUmY30Ts-GVX9rwDHFg" class="ccjwpg7"><span id="5Pt8ZUynCIoGrAZAeA64w" class="c-b1tmr7 c-tvn8fg c-lq625 cybkfeg c-kixfe9 c-jom4yy c-nwgv4b cblmt4n"><div><div>Thousands Are Seeing Real Results</div><div></div></div></span></div><div id="nVPUmY30Ts-GVX9rwDHFg" class="ccjwpg7"><span id="5Pt8ZUynCIoGrAZAeA64w" class="c-b1tmr7 c69iwd8 c-kixfe9"><div><div>Customers across America report dramatic shifts: slimmer waists, reduced bloating, better digestion, more energy, and consistent fat loss.</div></div></span></div><img src="assets/adt-presell-section7-image1.png" alt="Eye chart seen through glasses" class="content-image cd88b8k" id="74x3ZH8vs4bk8iBFpYUeJ" loading="lazy"/></section><section id="features" class="c-lkia1r"><div id="nVPUmY30Ts-GVX9rwDHFg" class="ccjwpg7"><span id="5Pt8ZUynCIoGrAZAeA64w" class="c-b1tmr7 c-tvn8fg c-lq625 cybkfeg c-kixfe9 c-jom4yy c-nwgv4b cblmt4n"><div><div>Where to Buy Akemi Detox Tea (And Why It’s Selling Out)</div><div></div></div></span></div><div id="nVPUmY30Ts-GVX9rwDHFg" class="ccjwpg7"><span id="Gl220sQmQWkMEU9ckCou7" class="c-b1tmr7 c-kixfe9"><span id="9GyP-uBMaDqpAzgnJa95u" class="c-cvr7xx c69iwd8 cybkfeg"><span>Independent Health Journalist:&nbsp; Where can you buy Akemi Detox Tea? And why is it selling out so quickly?<br><br></span><span>Hillary:<br></span></span><span id="QsgrsLpegY7mx_Bnz8LZ8" class="c-cvr7xx"><span id="WmiK3WUor_WMIXA6k_2Sr" class="c-cvr7xx c69iwd8"><span><span>"So many people are excited to try Akemi because they’ve heard how well it’s working for others and because there’s no risk involved. We make it easy for people to try it for themselves with a simple 30-day money-back guarantee if it’s not the right fit.”</span><span><br></span><br><span>“We don’t sell in pharmacies or stores. We sell directly, so people don’t pay middleman markups.”</span><span><br></span><br><span></span></span></span><span id="u1TONH4qzQRP8xL2T-dSv" class="c-cvr7xx c69iwd8 cybkfeg"><span>Amy:</span><br></span><span id="U_NGG2ezpF_5uQpSOE4dt" class="c-cvr7xx"><span id="rjODvEmGcwcQ_pOVr0th0" class="c-cvr7xx c69iwd8"><span>“Normally, a 30-day supply costs</span></span><span id="KLFLApB36s2L5jWM55I-i" class="c-cvr7xx c1392fj cybkfeg"><span> $</span>80.16</span><span id="6lUn5Di7bvJS8xFGPKKYy" class="c-cvr7xx"><span id="NIVzvL4RXBCQk6i7sed5U" class="c-cvr7xx c69iwd8"><span>, but right now we’re offering a </span></span><span id="FhYAp47HZkT0fEK3WiWi7" class="c-cvr7xx c-m3rowh cybkfeg"><span>limited special promotion for just $</span>36.07</span><span id="gIFHapm47GL3z8sDan2V3" class="c-cvr7xx"><span id="Ze79D1fV9-e6g1UEvfyzR" class="c-cvr7xx c69iwd8"><span> instead. Our goal is to give as many people as possible the chance to try Akemi risk-free, which is why availability can be limited during these promotions.”</span><span><br></span><br><span>“And the best part? We offer a </span></span><span id="ZNEqrxxztBwAqJ0ohWZGT" class="c-cvr7xx c-m3rowh cybkfeg"><span>30-day money-back guarantee</span></span><span id="7sW5rFxVMiWxNpIQj0VMw" class="c-cvr7xx c69iwd8"><span> — if someone isn’t satisfied, we refund the purchase price with no questions asked. While everyone’s experience is different, returns are rare because many customers are genuinely happy with how they feel after using Akemi.”</span></span></span></span></span></span></span></div></section></main><a class="pulse c-lc9846 c-oaxxat cevei02 c-rri4mx c-hz2hil c-jaytv5 c-sc1q4l c-z1rj74 ccdkvsh cgt2htg cwzv3pd cey0ojg cmpa6x1 c-d7jzl0 c-i605lu c-evftdq c7l9c6s c-4au6wl cixnl4f c-mb6oog c-1vttgr ctv5jah c2z967n c2uop3j c-lyc0k0" data-cta-button=""><span class="c-m9yni cey0ojg c-v947c4 cybkfeg c-jomryh cjz719g cjt0hrq c2upki6 c-lyb55d">👉 Check availability (Money-back guarantee)</span></a><div class="c-lc9846 c-oaxxat c-rri4mx cxpk1f6 c7l9c6s cevgj0h c-aop3ja c-b1u9qq cunh2wk c-chb6fh c-6ctqm4 c-ljyhge cd88b8k"><div class="c-lc9846 c-oaxxat c-rri4mx cxpk1f6 c7l9c6s c-3n63zq cb2yb9t c-6s5fkd c1kzpo2 cnkzvdv c-1vttgr"><span class="c-n92bdn c-d7jzl0 cunh2wk c-chb6fh ck6ttv0 cybkfeg c-lq625 c-joiy1b c-6s5fkd c1kzpo2">IMPORTANT UPDATE</span><img src="assets/adt-presell-reviewsection-image1.png" class="c-hi7sxz cjmgjye c-d7jzl0" loading="lazy"/><div class="c-lc9846 c-oaxxat c-rri4mx cxpk1f6 c7l9c6s c-3n63zq c-b1u9qq c-aop3ja c-evftdq"><div id="nVPUmY30Ts-GVX9rwDHFg" class="wrap-mobile ccjwpg7 c-rjpj7z cxuo92i c-oaxxat c-5pdfmv c-evftdq cumxab7 c-chuz0u c-kixfe9"><span id="5Pt8ZUynCIoGrAZAeA64w" class="c-b1tmr7 c-n92bdn c-tvn8fg c-lsq09 cybkfeg c-rjpj7z c-joo1xj cblmt4n"><div><span style="background-color: rgba(255, 255, 255, 0);">Since the TV Broadcast,</span></div><div></div><div></div></span></div><div id="nVPUmY30Ts-GVX9rwDHFg" class="wrap-mobile ccjwpg7"><span id="5Pt8ZUynCIoGrAZAeA64w" class="c-b1tmr7 c-n92bdn c-tvn8fg c-lsq09 cybkfeg c-joo1xj cblmt4n"><div><span style="background-color: rgba(255, 255, 255, 0);">Akemi Detox Tea has sold out four times.</span></div></span></div></div><div id="nVPUmY30Ts-GVX9rwDHFg" class="wrap-mobile ccjwpg7"><span id="5Pt8ZUynCIoGrAZAeA64w" class="c-b1tmr7 c-n92bdn c69iwd8"><div><span style="background-color: rgba(255, 255, 255, 0);">The formula is difficult to produce, and demand is higher than supply.</span></div><div></div><div>We refuse to compromise on quality,” said CEO Jo Dunn.</div></span></div><div class="c-lc9846 c-oaxxat c-rri4mx cxpk1f6 c7l9c6s c-3n4ynq cmpbgw3 c69iwd8 c-mb4rpv cf2dil2 cqbja3 c5h3v85 c-vuctxg c-gbyeeq c50cs8v"><span class="c-n92bdn c69iwd8 c-msh9t cybj5fe cuo0vhx c-cgrdu4 c-jp40lq c-6s5fkd c1kzpo2">Update: Due to high demand, the stock is expected to run out soon. Given the current supply situation, it is unclear when new stock will arrive. Therefore, extended waiting times may occur if you don’t act quickly.</span></div><a class="pulse c-lc9846 c-oaxxat cevei02 c-rri4mx c-hz2hil c-jaytv5 c-sc1q4l c-z1rj74 ccdkvsh cgt2htg cwzv3pd cey0ojg cmpa6x1 c-d7jzl0 c-i605lu c-evftdq c7l9c6s c-4au6wl cixnl4f c-mb6oog ciahi3p c2uop3j c-lyc0k0" data-cta-button=""><span class="c-mcilm cey0ojg c-v947c4 cybkfeg cjz719g c-jp40lq c-3lxzvc c2u5rwt c-lyuxqq">👉 Secure 50% off your order now before stock runs out.</span></a><div id="nVPUmY30Ts-GVX9rwDHFg" class="wrap-mobile ccjwpg7 c-oaxxat cxds8az c-1vttgr c-6s5fkd c1kzpo2"><img src="assets/adt-presell-closingcta-icon-1.png" class="c-hi7sxz cjmgjye c-d7jzl0 cv4ctcs c-w9u8xv" loading="lazy"/><span id="5Pt8ZUynCIoGrAZAeA64w" class="c-b1tmr7 c1392fj cunh2wk c-mcilm cybjsex c-jp2qmo c2u2kz6 c-w9u8xv cjt0hrq"><div><span style="background-color: rgba(255, 255, 255, 0);">Current stock is almost gone. New batches may be delayed.</span><span style="background-color: rgba(255, 255, 255, 0);"><br></span></div></span></div></div></div></div></section><div id="uj_0qdylcFt-yPqbD1WTS" class="main-layout page-wrapper"><aside id="oErOAGluEQ3sDr5WXmWsu" class=""></aside></div><div id="kyd4FEEjtwDeuN6iSkEQ9" class="c-o6hhdg"><h3 id="UV6rEvvkAadhHGF3Vj4jy" class="c-468i9h">About the author</h3><div id="wQ66oGfvYZ_2MQp5yMBJF" class="author-photo-wrapper c-468i9h"><img src="https://stdigitalmvmtdev001.blob.core.windows.net/assets/develop/1c1abad7edf46b15ea19a06d35e008047b04af2a.png" alt="Photo of the author, Colin" class="c-468i9h" id="F72HDpZp0QTb2WxtAruUu" loading="lazy"/></div><p id="kM_LPK0Rw8Fm-B18PqMwB" class="text c-468i9h">
+        Colin is a retired physical therapist with a DPT (Doctorate of Physical
+        Therapy) degree. He’s spent his career helping patients recover from
+        injuries, managing chronic conditions and improving their overall
+        independence.
+      </p></div><footer id="section-footer" class="site-footer c-oaxxat cxpk1f6 c7l9c6s c-evftdq cb41wgj cl5gnj"><div id="j9Ipi0TAP9ytuUBnE8Tek" class="footer-content c-oaxxat cxpk1f6 c-evftdq c7l9c6s cb41wgj ckem8y5"><img src="assets/akemidetoxtea-logo-white.png" class="c-hi7sxz cjmgjye c-d7jzl0 cxvvo6e cv4ctcs" loading="lazy"/><nav id="HzdrFNzD_Off2tiQ1yYCA" class="footer-nav cey0ojg c-oaxxat cb31i7g c-evftdq c7l9c6s c-jff85s"><a id="oxE5v3NcAakA2EdJ3QSZF" class="cey0ojg c-msh9t c-jp5aks ckrjqhp c5ak960" href="https://akemidetoxtea.buyskyline.co/offer/1/terms.php" target="_self">Terms &amp; Conditions</a><span id="dhpTVsCPxhBA7J5b6bx2-" class=""> | </span><a id="Eyl0KJtJcRuPsMGpCH5OO" class="cey0ojg c-msh9t c-jp5aks c5ak960 ckrjqhp" href="https://akemidetoxtea.buyskyline.co/offer/1/contact.php" target="_self">Contact Us</a><span id="dhpTVsCPxhBA7J5b6bx2-" class=""> | </span><a id="oxE5v3NcAakA2EdJ3QSZF" class="cey0ojg c-msh9t c-jp5aks c5ak960 ckrjqhp" href="https://akemidetoxtea.buyskyline.co/offer/1/privacy.php" target="_self">Privacy Policy</a></nav><div id="BpykfdUxLHNo8zi5aAf7X" class="footer-bottom"><p id="Eg0kDaPvT9eJaDhCXCNJm" class="copyright text cey0ojg c-msh9t cybkfeg c-jp5aks">©2026 Akemi Detox Tea. All Rights Reserved.</p></div><div id="72dYLp46iZ0Or8G1MXqYv" class="disclaimer text"><span id="0MJ7WY0fPgiWTr1-kZvek" class="c-3n63zq cey0ojg c-msh9t cybj5fe c-jp5aks">This agreement may be updated to reflect changes to our information practices. In the event any changes are made, we will notify you via email and/or post an announcement on our site. We recommend you periodically review this page for the latest information on our Terms &amp; Conditions. If you do not agree to the changes made, please terminate your registration with USS by notifying USS immediately. You can determine when this agreement was last revised by checking the “last updated” legend at the top of this policy. </span></div></div></footer></div></div><script src="https://stdigitalmvmtprod001.blob.core.windows.net/libs/mvmt-latest.prod.js.min.js"></script><script src="scripts/presell.js"></script><script src="scripts/pageBuilder/page/checkout/checkout.js"></script><script>document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(() => {
+        const cookiesBannner = document.querySelector("[data-cookie-banner]");
+        const buttons = document
+            .querySelector("[data-cookie-btns]")
+            .querySelectorAll("button");
+        buttons.forEach((btn) =>
+            btn.addEventListener("click", () => {
+                cookiesBannner.style.display = "none";
+            })
+        );
+        console.log("TESTEEEEEE")
+    }, 5000);
+});
+</script>
+<script type="application/json" id="page-config">
+{
+  "campaignId": "337",
+  "pageType": "Presell",
+  "funnelId": "6a0d88ee5dd10979e4c6e4ac",
+  "locale": "US"
+}
+</script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      setTimeout(() => {
+        const cookiesBanner = document.querySelector("[data-cookie-banner]");
+        const cookieAcceptButton = document.querySelector("[data-cookie-accept-button]");
+        const cookieRejectButton = document.querySelector("[data-cookie-reject-button]");
+
+        if (!(cookiesBanner && cookieAcceptButton && cookieRejectButton)) return;
+
+        const cookieDependentScripts = [];
+        const cookiesAnswer = sessionStorage.getItem("cookiesAnswer");
+
+        if (cookiesAnswer === "accepted" || cookiesAnswer === "rejected") {
+          cookiesBanner.style.display = "none";
+          injectTrackingScripts();
+        } else {
+          cookiesBanner.style.display = "flex";
+        }
+
+        cookieAcceptButton.addEventListener("click", () => {
+          sessionStorage.setItem("cookiesAnswer", "accepted");
+          cookiesBanner.style.display = "none";
+          if (cookieDependentScripts.length > 0) injectTrackingScripts()
+        });
+
+        cookieRejectButton.addEventListener("click", () => {
+          sessionStorage.setItem("cookiesAnswer", "rejected");
+          cookiesBanner.style.display = "none";
+        });
+
+        function injectTrackingScripts() {
+          cookieDependentScripts.forEach((script) => {
+            if (script.src) {
+              const scriptElement = document.createElement("script");
+              scriptElement.src = script.src;
+              scriptElement.async = true;
+              document.head.appendChild(scriptElement);
+            } else if (script.text) {
+              const scriptElement = document.createElement("script")
+              scriptElement.innerHTML = script.text;
+              document.head.appendChild(scriptElement);
+            }
+          })
+        }
+      }, 500);
+    });
+  </script>
+  </body></html>
